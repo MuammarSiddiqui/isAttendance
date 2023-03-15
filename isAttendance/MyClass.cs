@@ -110,7 +110,7 @@ namespace isAttendance
                 //Console.WriteLine("Connecting...");
                 Service1.WriteToFile("Connecting");
                 CZKEM objCZKEM = new CZKEM();
-                if (objCZKEM.Connect_Net("101.53.248.188", (int)CONSTANTS.PORT))
+                if (objCZKEM.Connect_Net(IpAddress.GetIpAddress(), (int)CONSTANTS.PORT))
                 {
                     objCZKEM.SetDeviceTime2(objCZKEM.MachineNumber, DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
                    
