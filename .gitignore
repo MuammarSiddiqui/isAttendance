@@ -58,7 +58,7 @@ dlldata.c
 # Benchmark Results
 BenchmarkDotNet.Artifacts/
 
-isAttendance/IpAddress.cs
+IpAddress.cs
 
 # .NET Core
 project.lock.json
