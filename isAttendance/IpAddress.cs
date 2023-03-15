@@ -10,7 +10,7 @@ namespace isAttendance
     {
         public static string GetIpAddress()
         {
-            return "182.180.190.196";
+            return "";
         }
     }
 }
