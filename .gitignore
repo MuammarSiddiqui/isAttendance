@@ -58,7 +58,7 @@ dlldata.c
 # Benchmark Results
 BenchmarkDotNet.Artifacts/
 
-IpAddress.cs
+StaticValues.cs
 
 # .NET Core
 project.lock.json

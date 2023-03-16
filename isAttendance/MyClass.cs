@@ -25,7 +25,7 @@ namespace isAttendance
                 List<AttendanceLog> list = new List<AttendanceLog>();
                 Service1.WriteToFile("Connecting... " + DateTime.Now);
                 CZKEM objCZKEM = new CZKEM();
-                if (objCZKEM.Connect_Net(IpAddress.GetIpAddress(), (int)CONSTANTS.PORT))
+                if (objCZKEM.Connect_Net(StaticValues.GetIpAddress(), (int)CONSTANTS.PORT))
                 {
                     objCZKEM.SetDeviceTime2(objCZKEM.MachineNumber, DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
                    
@@ -88,7 +88,7 @@ namespace isAttendance
                             }
                             alog.Date = date;
                             log = "User ID:" + dwEnrollNumber + " " + verificationMode(dwVerifyMode) + " " + InorOut(dwInOutMode) + " " + dwDay + "/" + dwMonth + "/" + dwYear + " " + time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
-                            //Console.WriteLine(log);
+                          
                             list.Add(alog);
                         }
 
@@ -110,7 +110,7 @@ namespace isAttendance
                 //Console.WriteLine("Connecting...");
                 Service1.WriteToFile("Connecting");
                 CZKEM objCZKEM = new CZKEM();
-                if (objCZKEM.Connect_Net(IpAddress.GetIpAddress(), (int)CONSTANTS.PORT))
+                if (objCZKEM.Connect_Net(StaticValues.GetIpAddress(), (int)CONSTANTS.PORT))
                 {
                     objCZKEM.SetDeviceTime2(objCZKEM.MachineNumber, DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
                    
