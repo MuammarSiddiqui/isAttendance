@@ -255,16 +255,51 @@ namespace isAttendance
                     InOrOut = "OUT";
                     break;
                 case 2:
-                    InOrOut = "BREAK-OUT";
+                    // InOrOut = "BREAK-OUT";
+                    InOrOut = "OUT";
                     break;
                 case 3:
-                    InOrOut = "BREAK-IN";
+                    //  InOrOut = "BREAK-IN";
+                    InOrOut = "IN";
                     break;
                 case 4:
-                    InOrOut = "OVERTIME-IN";
+                  //  InOrOut = "OVERTIME-IN";
+                    InOrOut = "IN";
                     break;
                 case 5:
-                    InOrOut = "OVERTIME-OUT";
+                    // InOrOut = "OVERTIME-OUT";
+                    InOrOut = "OUT";
+                    break;
+
+            }
+            return InOrOut;
+        }
+        public static string InorOut2(int InOut)
+        {
+            string InOrOut = "";
+            switch (InOut)
+            {
+                case 0:
+                    InOrOut = "IN";
+                    break;
+                case 1:
+                    InOrOut = "OUT";
+                    break;
+                case 2:
+                     InOrOut = "BREAK-OUT";
+                    
+                    break;
+                case 3:
+                      InOrOut = "BREAK-IN";
+                  
+                    break;
+                case 4:
+                      InOrOut = "OVERTIME-IN";
+                  
+                    break;
+                case 5:
+                     InOrOut = "OVERTIME-OUT";
+                   // InOrOut = "OUT";
                     break;
 
             }

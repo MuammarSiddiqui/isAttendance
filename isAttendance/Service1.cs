@@ -80,7 +80,6 @@ namespace isAttendance
             }
             catch (Exception ex)
             {
-                WriteToFile("Catch Block ");
                 WriteToFile(ex.Message);
                 WriteToFile(ex.InnerException.ToString());
                 WriteToFile(ex.ToString());
@@ -91,6 +90,10 @@ namespace isAttendance
         protected override void OnStop()
         {
             WriteToFile("Service is stopped at " + DateTime.Now);
+            timer.Interval = 10000; //number in milisecinds
+            timer.Enabled = true;
+            timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
+            timer.Start();
         }
         private async void OnElapsedTime(object source, ElapsedEventArgs e)
         {
