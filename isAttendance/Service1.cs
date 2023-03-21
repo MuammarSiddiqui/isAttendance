@@ -1,18 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Runtime.Remoting.Contexts;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,9 +28,9 @@ namespace isAttendance
             WriteToFile("Starting Services");
             try
             {
-                var res = MyClass.getAll();
-                WriteToFile("Attempting to post data ..." + res.ToString());
-                var abc = await UploadData(res);
+                MyClass.getAll(out List<AttendanceLog> list, out List<AttendanceHistory> lst);
+             //   WriteToFile("Attempting to post data ..." + res.ToString());
+                var abc = await UploadData(list,lst);
                 if (!abc)
                 {
                     WriteToFile("Error While Posting Data");
@@ -48,14 +38,14 @@ namespace isAttendance
             }
             catch (Exception e)
             {
-                WriteToFile("Exception " + e);
+               
                 WriteToFile(e.Message);
                 WriteToFile(e.InnerException.ToString());
-                WriteToFile(e.StackTrace);
+              
             }
 
         }
-        public static async Task<bool> UploadData(List<AttendanceLog> abc)
+        public static async Task<bool> UploadData(List<AttendanceLog> abc,List<AttendanceHistory> history)
         {
             try
             {
@@ -63,7 +53,7 @@ namespace isAttendance
                 string URI = StaticValues.GetUrl();
 
                 var json = JsonConvert.SerializeObject(abc);
-                var data = new StringContent(json, Encoding.UTF8, "application/json");
+                var data = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
                 using (var client = new HttpClient())
                 {
                     System.Net.ServicePointManager.ServerCertificateValidationCallback +=
@@ -76,13 +66,29 @@ namespace isAttendance
                     var res = await client.PostAsync(URI, data);
 
                 }
+                string AttHistoryURI = StaticValues.GetUrl();
+
+                var Historyjson = JsonConvert.SerializeObject(history);
+                var h = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+                using (var client = new HttpClient())
+                {
+                    System.Net.ServicePointManager.ServerCertificateValidationCallback +=
+    (se, cert, chain, sslerror) =>
+    {
+        return true;
+    };
+                    client.BaseAddress = new Uri(AttHistoryURI);
+
+                    var res = await client.PostAsync(AttHistoryURI, h);
+
+                }
                 return true;
             }
             catch (Exception ex)
             {
                 WriteToFile(ex.Message);
                 WriteToFile(ex.InnerException.ToString());
-                WriteToFile(ex.ToString());
+                
                 return false;
             }
         }
@@ -105,9 +111,9 @@ namespace isAttendance
             WriteToFile("Starting Services");
             try
             {
-                var res = MyClass.getAll();
-                WriteToFile("Attempting to post data ..." + res.ToString());
-                var abc = await UploadData(res);
+                MyClass.getAll(out List<AttendanceLog> list, out List<AttendanceHistory> lst);
+            //    WriteToFile("Attempting to post data ..." + res.ToString());
+                var abc = await UploadData(list, lst);
                 if (!abc)
                 {
                     WriteToFile("Error While Posting Data");
@@ -132,16 +138,30 @@ namespace isAttendance
             if (!File.Exists(filepath))
             {
                 // Create a file to write to.
-                using (StreamWriter sw = File.CreateText(filepath))
+                try
                 {
-                    sw.WriteLine(Message);
+                    using (StreamWriter sw = File.CreateText(filepath))
+                    {
+                        sw.WriteLine(Message);
+                    }
+                }
+                catch (Exception)
+                {
+
                 }
             }
             else
             {
-                using (StreamWriter sw = File.AppendText(filepath))
+                try
                 {
-                    sw.WriteLine(Message);
+                    using (StreamWriter sw = File.AppendText(filepath))
+                    {
+                        sw.WriteLine(Message);
+                    }
+                }
+                catch (Exception)
+                {
+
                 }
             }
         }

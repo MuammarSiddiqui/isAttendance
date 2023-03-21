@@ -17,12 +17,13 @@ namespace isAttendance
         }
 
 
-        public static List<AttendanceLog> getAll()
+        public static void getAll(out List<AttendanceLog> list,out List<AttendanceHistory> lst)
         {
 
             try
             {
-                List<AttendanceLog> list = new List<AttendanceLog>();
+               list = new List<AttendanceLog>();
+                lst = new List<AttendanceHistory>();
                 Service1.WriteToFile("Connecting... " + DateTime.Now);
                 CZKEM objCZKEM = new CZKEM();
                 if (objCZKEM.Connect_Net(StaticValues.GetIpAddress(), (int)CONSTANTS.PORT))
@@ -71,26 +72,125 @@ namespace isAttendance
                         {
                             break;
                         }
+                        AttendanceHistory aloghistory = new AttendanceHistory();
+                        log = "User ID:" + dwEnrollNumber + " " + verificationMode(dwVerifyMode) + " " + InorOut2(dwInOutMode) + " " + dwDay + "/" + dwMonth + "/" + dwYear + " " + time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
+                        aloghistory.UserId = dwEnrollNumber;
+                        var date = dwDay + "/" + dwMonth + "/" + dwYear;
+                        var t = time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
+                        if (InorOut2(dwInOutMode) == "IN")
+                        {
+                            aloghistory.SignIn = t;
+                        }
+                        else if (InorOut2(dwInOutMode) == "OUT")
+                        {
+                            aloghistory.SignOut = t;
+                        }
+                        aloghistory.Date = date;
+                        log = "User ID:" + dwEnrollNumber + " " + verificationMode(dwVerifyMode) + " " + InorOut2(dwInOutMode) + " " + dwDay + "/" + dwMonth + "/" + dwYear + " " + time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
+
+                        lst.Add(aloghistory);
                         if (InorOut(dwInOutMode) == "IN" || InorOut(dwInOutMode) == "OUT")
                         {
                             AttendanceLog alog = new AttendanceLog();
                             log = "User ID:" + dwEnrollNumber + " " + verificationMode(dwVerifyMode) + " " + InorOut(dwInOutMode) + " " + dwDay + "/" + dwMonth + "/" + dwYear + " " + time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
-                            alog.UserId = dwEnrollNumber;
-                            var date = dwDay + "/" + dwMonth + "/" + dwYear;
-                            var t = time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
+                            alog.EmployeeId = dwEnrollNumber;
+                            //var date = dwDay + "/" + dwMonth + "/" + dwYear;
+                            //var t = time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
                             if (InorOut(dwInOutMode) == "IN")
                             {
-                                alog.signIn = t;
+                                alog.SignIn = t;
                             }
                             else if (InorOut(dwInOutMode) == "OUT")
                             {
-                                alog.signOut = t;
+                                alog.SignOut = t;
                             }
-                            alog.Date = date;
+                            alog.AttendanceDate = DateTime.Parse(date);
                             log = "User ID:" + dwEnrollNumber + " " + verificationMode(dwVerifyMode) + " " + InorOut(dwInOutMode) + " " + dwDay + "/" + dwMonth + "/" + dwYear + " " + time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
                           
                             list.Add(alog);
                         }
+
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public static List<AttendanceHistory> getAllHistory()
+        {
+
+            try
+            {
+                List<AttendanceHistory> list = new List<AttendanceHistory>();
+                Service1.WriteToFile("Connecting... " + DateTime.Now);
+                CZKEM objCZKEM = new CZKEM();
+                if (objCZKEM.Connect_Net(StaticValues.GetIpAddress(), (int)CONSTANTS.PORT))
+                {
+                    objCZKEM.SetDeviceTime2(objCZKEM.MachineNumber, DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+                   
+                    Service1.WriteToFile("Connection Successfull... " + DateTime.Now);
+                }
+                else
+                {
+                    Service1.WriteToFile("Connection Failed... " + DateTime.Now);
+                }
+                //if (objCZKEM.ReadGeneralLogData(objCZKEM.MachineNumber))
+                if (true)
+                {
+                    //ArrayList logs = new ArrayList();
+                    string log;
+                    string dwEnrollNumber;
+                    int dwVerifyMode;
+                    int dwInOutMode;
+                    int dwYear;
+                    int dwMonth;
+                    int dwDay;
+                    int dwHour;
+                    int dwMinute;
+                    int dwSecond;
+                    int dwWorkCode = 1;
+                    int AWorkCode;
+                    var res = objCZKEM.GetWorkCode(dwWorkCode, out AWorkCode);
+                    //objCZKEM.SaveTheDataToFile(objCZKEM.MachineNumber, "attendance.txt", 1);
+                    while (true)
+                    {
+                        if (!objCZKEM.SSR_GetGeneralLogData(
+                        objCZKEM.MachineNumber,
+                        out dwEnrollNumber,
+                        out dwVerifyMode,
+                        out dwInOutMode,
+                        out dwYear,
+                        out dwMonth,
+                        out dwDay,
+                        out dwHour,
+                        out dwMinute,
+                        out dwSecond,
+                        ref AWorkCode
+                        ))
+                        {
+                            break;
+                        }
+                      
+                            AttendanceHistory alog = new AttendanceHistory();
+                            log = "User ID:" + dwEnrollNumber + " " + verificationMode(dwVerifyMode) + " " + InorOut2(dwInOutMode) + " " + dwDay + "/" + dwMonth + "/" + dwYear + " " + time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
+                            alog.UserId = dwEnrollNumber;
+                            var date = dwDay + "/" + dwMonth + "/" + dwYear;
+                            var t = time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
+                            if (InorOut2(dwInOutMode) == "IN")
+                            {
+                                alog.SignIn = t;
+                            }
+                            else if (InorOut2(dwInOutMode) == "OUT")
+                            {
+                                alog.SignOut = t;
+                            }
+                            alog.Date = date;
+                            log = "User ID:" + dwEnrollNumber + " " + verificationMode(dwVerifyMode) + " " + InorOut2(dwInOutMode) + " " + dwDay + "/" + dwMonth + "/" + dwYear + " " + time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
+                          
+                            list.Add(alog);
+                        
 
                     }
                 }
@@ -156,11 +256,11 @@ namespace isAttendance
                         {
                             break;
                         }
-                        log = "User ID:" + dwEnrollNumber + " " + verificationMode(dwVerifyMode) + " " + InorOut(dwInOutMode) + " " + dwDay + "/" + dwMonth + "/" + dwYear + " " + time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
+                        //log = "User ID:" + dwEnrollNumber + " " + verificationMode(dwVerifyMode) + " " + InorOut(dwInOutMode) + " " + dwDay + "/" + dwMonth + "/" + dwYear + " " + time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
 
-                        log = "User ID:" + dwEnrollNumber + " " + verificationMode(dwVerifyMode) + " " + InorOut(dwInOutMode) + " " + dwDay + "/" + dwMonth + "/" + dwYear + " " + time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
-                        Service1.WriteToFile(log);
-                        list.Add(log);
+                        //log = "User ID:" + dwEnrollNumber + " " + verificationMode(dwVerifyMode) + " " + InorOut(dwInOutMode) + " " + dwDay + "/" + dwMonth + "/" + dwYear + " " + time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
+                        //Service1.WriteToFile(log);
+                       // list.Add(log);
 
                     }
                 }

@@ -14,7 +14,6 @@ namespace isAttendance
         public ProjectInstaller()
         {
             InitializeComponent();
-           
         }
     }
 }
