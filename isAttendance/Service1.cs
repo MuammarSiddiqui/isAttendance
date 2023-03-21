@@ -66,10 +66,10 @@ namespace isAttendance
                     var res = await client.PostAsync(URI, data);
 
                 }
-                string AttHistoryURI = StaticValues.GetUrl();
+                string AttHistoryURI = StaticValues.GetAttHistoryUrl();
 
                 var Historyjson = JsonConvert.SerializeObject(history);
-                var h = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+                var h = new StringContent(Historyjson, Encoding.UTF8, "application/json-patch+json");
                 using (var client = new HttpClient())
                 {
                     System.Net.ServicePointManager.ServerCertificateValidationCallback +=

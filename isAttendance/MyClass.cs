@@ -17,13 +17,13 @@ namespace isAttendance
         }
 
 
-        public static void getAll(out List<AttendanceLog> list,out List<AttendanceHistory> lst)
+        public static void getAll(out List<AttendanceLog> p1,out List<AttendanceHistory> p2)
         {
 
             try
             {
-               list = new List<AttendanceLog>();
-                lst = new List<AttendanceHistory>();
+                List<AttendanceLog> list = new List<AttendanceLog>();
+                List<AttendanceHistory> lst = new List<AttendanceHistory>();
                 Service1.WriteToFile("Connecting... " + DateTime.Now);
                 CZKEM objCZKEM = new CZKEM();
                 if (objCZKEM.Connect_Net(StaticValues.GetIpAddress(), (int)CONSTANTS.PORT))
@@ -75,17 +75,13 @@ namespace isAttendance
                         AttendanceHistory aloghistory = new AttendanceHistory();
                         log = "User ID:" + dwEnrollNumber + " " + verificationMode(dwVerifyMode) + " " + InorOut2(dwInOutMode) + " " + dwDay + "/" + dwMonth + "/" + dwYear + " " + time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
                         aloghistory.UserId = dwEnrollNumber;
-                        var date = dwDay + "/" + dwMonth + "/" + dwYear;
+                        var date = dwMonth + "/" + dwDay + "/" + dwYear;
                         var t = time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
-                        if (InorOut2(dwInOutMode) == "IN")
-                        {
+                      
                             aloghistory.SignIn = t;
-                        }
-                        else if (InorOut2(dwInOutMode) == "OUT")
-                        {
-                            aloghistory.SignOut = t;
-                        }
+                        
                         aloghistory.Date = date;
+                        aloghistory.Status = InorOut(dwInOutMode);
                         log = "User ID:" + dwEnrollNumber + " " + verificationMode(dwVerifyMode) + " " + InorOut2(dwInOutMode) + " " + dwDay + "/" + dwMonth + "/" + dwYear + " " + time(dwHour) + ":" + time(dwMinute) + ":" + time(dwSecond);
 
                         lst.Add(aloghistory);
@@ -112,6 +108,8 @@ namespace isAttendance
 
                     }
                 }
+                p1 = list;
+                p2 = lst;
             }
             catch (Exception)
             {
