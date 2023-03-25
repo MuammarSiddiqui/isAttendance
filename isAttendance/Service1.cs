@@ -22,18 +22,36 @@ namespace isAttendance
         {
             WriteToFile("Service is started at " + DateTime.Now);
             timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-            timer.Interval = 300000; //number in milisecinds
+            timer.Interval = 400000; //number in milisecinds
             timer.Start();
             timer.Enabled = true;
             WriteToFile("Starting Services");
             try
             {
-                MyClass.getAll(out List<AttendanceLog> list, out List<AttendanceHistory> lst);
-             //   WriteToFile("Attempting to post data ..." + res.ToString());
-                var abc = await UploadData(list,lst);
-                if (!abc)
+                var ip = StaticValues.GetIpAddress();
+                foreach (var item in ip)
                 {
-                    WriteToFile("Error While Posting Data");
+                    try
+                    {
+                        MyClass.getAll(out List<AttendanceLog> list, out List<AttendanceHistory> lst, item.Ip, item.Port, (Guid)item.CampusId);
+                        try
+                        {
+                            WriteToFile("Attempting to post data ...");
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                        var abc = await UploadData(list, lst);
+                        if (!abc)
+                        {
+                            WriteToFile("Error While Posting Data");
+                        }
+                    }
+                    catch (Exception exc)
+                    {
+                        WriteToFile("CampusId " + item.CampusId + " ip " + item.Ip + exc.Message + " " + exc.InnerException);
+                    }
                 }
             }
             catch (Exception e)
@@ -104,19 +122,30 @@ namespace isAttendance
         private async void OnElapsedTime(object source, ElapsedEventArgs e)
         {
             WriteToFile("Service recall at " + DateTime.Now); timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-            timer.Interval = 300000; //number in milisecinds
+            timer.Interval = 400000; //number in milisecinds
             timer.Enabled = true;
             timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
             timer.Start();
             WriteToFile("Starting Services");
             try
             {
-                MyClass.getAll(out List<AttendanceLog> list, out List<AttendanceHistory> lst);
-            //    WriteToFile("Attempting to post data ..." + res.ToString());
-                var abc = await UploadData(list, lst);
-                if (!abc)
+                var ip = StaticValues.GetIpAddress();
+                foreach (var item in ip)
                 {
-                    WriteToFile("Error While Posting Data");
+                    try
+                    {
+                        MyClass.getAll(out List<AttendanceLog> list, out List<AttendanceHistory> lst, item.Ip, item.Port, (Guid)item.CampusId);
+                        //   WriteToFile("Attempting to post data ..." + res.ToString());
+                        var abc = await UploadData(list, lst);
+                        if (!abc)
+                        {
+                            WriteToFile("Error While Posting Data");
+                        }
+                    }
+                    catch (Exception exc)
+                    {
+                        WriteToFile("CampusId " + item.CampusId + " ip " + item.Ip + exc.Message + " " + exc.InnerException);
+                    }
                 }
             }
             catch (Exception ex)
